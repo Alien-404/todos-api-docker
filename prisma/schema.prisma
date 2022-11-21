@@ -14,13 +14,7 @@ model todos {
   id          String   @id @default(cuid())
   todo        String
   description String
-  priority    priority @default(LOW)
+  priority    Int      @default(0)
   status      Boolean  @default(false)
   date        DateTime @default(now())
-}
-
-enum priority {
-  LOW
-  MEDIUM
-  HIGH
 }

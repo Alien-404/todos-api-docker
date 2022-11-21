@@ -112,6 +112,33 @@ const deleteTodo = async (req, res) => {
   });
 };
 
+// DELETE COMPLETED TODOS
+const deleteCompletedTodos = async (req, res) => {
+  const completedTodos = await prisma.todos.findFirst({
+    where: {
+      status: true,
+    },
+  });
+
+  // logic
+  if (!completedTodos) {
+    return res.status(404).json({
+      error: `No such todo has completed`,
+    });
+  }
+
+  const deletedTodos = await prisma.todos.deleteMany({
+    where: {
+      status: true,
+    },
+  });
+
+  res.status(200).json({
+    message: `endpoint /todos${req.path} successfull`,
+    data: deletedTodos,
+  });
+};
+
 // UPDATE TODO
 const updateTodo = async (req, res) => {
   const { id } = req.params;
@@ -152,4 +179,5 @@ module.exports = {
   getTodo,
   deleteTodo,
   updateTodo,
+  deleteCompletedTodos,
 };

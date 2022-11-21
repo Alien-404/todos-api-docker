@@ -10,6 +10,7 @@ const {
   getTodo,
   deleteTodo,
   updateTodo,
+  deleteCompletedTodos,
 } = require('../controllers/todosControllers');
 
 // use middleware
@@ -32,6 +33,9 @@ router.post('/', postTodo);
 
 // DELETE DATA
 router.delete('/:id', deleteTodo);
+
+// DELETE ALL COMPLETED TODOS
+router.delete('/clear/completed', deleteCompletedTodos);
 
 // UPDATE DATA
 router.patch('/:id', updateTodo);

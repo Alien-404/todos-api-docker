@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 // miscellaneous
-const BASE_URL = `http://localhost:${process.env.PORT}`;
+const BASE_URL = `http://localhost:${process.env.PORT || 8080}`;
 
 // variable
 const todosRoutes = require('./routes/todos');
