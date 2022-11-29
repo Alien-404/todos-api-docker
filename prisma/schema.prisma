@@ -16,5 +16,6 @@ model todos {
   description String
   priority    Int      @default(0)
   status      Boolean  @default(false)
-  date        DateTime @default(now())
+  date   DateTime @default(now())
+  notification Boolean @default(false)
 }

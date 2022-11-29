@@ -3,181 +3,209 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 // GET ALL
-const getTodos = async (req, res) => {
-  const todos = await prisma.todos.findMany();
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: todos,
-  });
+const getTodos = async(req, res) => {
+    const todos = await prisma.todos.findMany();
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: todos,
+    });
 };
 
 // GET ONLY UNCOMPLETE
-const getTodosCompleted = async (req, res) => {
-  const todos = await prisma.todos.findMany({
-    where: {
-      status: true,
-    },
-  });
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: todos,
-  });
+const getTodosCompleted = async(req, res) => {
+    const todos = await prisma.todos.findMany({
+        where: {
+            status: true,
+        },
+    });
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: todos,
+    });
 };
 
 // GET ONLY UNCOMPLETE
-const getTodosUncomplete = async (req, res) => {
-  const todos = await prisma.todos.findMany({
-    where: {
-      status: false,
-    },
-  });
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: todos,
-  });
+const getTodosUncomplete = async(req, res) => {
+    const todos = await prisma.todos.findMany({
+        where: {
+            status: false,
+        },
+    });
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: todos,
+    });
 };
 
 // POST TODOS
-const postTodo = async (req, res) => {
-  const { todo, description } = req.body;
+const postTodo = async(req, res) => {
+    const { todo, description } = req.body;
 
-  // check
-  if (!todo || !description) {
-    return res.status(400).json({
-      error: 'please provide todo and description',
+    // check
+    if (!todo || !description) {
+        return res.status(400).json({
+            error: 'please provide todo and description',
+        });
+    }
+
+    const newTodo = await prisma.todos.create({
+        data: {
+            ...req.body,
+        },
     });
-  }
 
-  const newTodo = await prisma.todos.create({
-    data: {
-      ...req.body,
-    },
-  });
-
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: newTodo,
-  });
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: newTodo,
+    });
 };
 
 // GET SINGLE WITH ID
-const getTodo = async (req, res) => {
-  const { id } = req.params;
+const getTodo = async(req, res) => {
+    const { id } = req.params;
 
-  // logic
-  const todo = await prisma.todos.findFirst({
-    where: {
-      id,
-    },
-  });
-
-  if (!todo) {
-    return res.status(404).json({
-      error: `No such todo with id: ${id}`,
+    // logic
+    const todo = await prisma.todos.findFirst({
+        where: {
+            id,
+        },
     });
-  }
 
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: todo,
-  });
+    if (!todo) {
+        return res.status(404).json({
+            error: `No such todo with id: ${id}`,
+        });
+    }
+
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: todo,
+    });
 };
 
 // DEELETE TODO
-const deleteTodo = async (req, res) => {
-  const { id } = req.params;
+const deleteTodo = async(req, res) => {
+    const { id } = req.params;
 
-  const todo = await prisma.todos.findFirst({
-    where: {
-      id,
-    },
-  });
-
-  // logic
-  if (!todo) {
-    return res.status(404).json({
-      error: `No such todo with id: ${id}`,
+    const todo = await prisma.todos.findFirst({
+        where: {
+            id,
+        },
     });
-  }
 
-  const delTodo = await prisma.todos.delete({
-    where: {
-      id,
-    },
-  });
+    // logic
+    if (!todo) {
+        return res.status(404).json({
+            error: `No such todo with id: ${id}`,
+        });
+    }
 
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: delTodo,
-  });
+    const delTodo = await prisma.todos.delete({
+        where: {
+            id,
+        },
+    });
+
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: delTodo,
+    });
 };
 
 // DELETE COMPLETED TODOS
-const deleteCompletedTodos = async (req, res) => {
-  const completedTodos = await prisma.todos.findFirst({
-    where: {
-      status: true,
-    },
-  });
-
-  // logic
-  if (!completedTodos) {
-    return res.status(404).json({
-      error: `No such todo has completed`,
+const deleteCompletedTodos = async(req, res) => {
+    const completedTodos = await prisma.todos.findFirst({
+        where: {
+            status: true,
+        },
     });
-  }
 
-  const deletedTodos = await prisma.todos.deleteMany({
-    where: {
-      status: true,
-    },
-  });
+    // logic
+    if (!completedTodos) {
+        return res.status(404).json({
+            error: `No such todo has completed`,
+        });
+    }
 
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: deletedTodos,
-  });
+    const deletedTodos = await prisma.todos.deleteMany({
+        where: {
+            status: true,
+        },
+    });
+
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: deletedTodos,
+    });
+};
+
+// DELETE UNCOMPLETED TODOS
+const deleteUnCompletedTodos = async(req, res) => {
+    const unCompletedTodos = await prisma.todos.findFirst({
+        where: {
+            status: false,
+        },
+    });
+
+    // logic
+    if (!unCompletedTodos) {
+        return res.status(404).json({
+            error: `No such todo has completed`,
+        });
+    }
+
+    const deletedTodos = await prisma.todos.deleteMany({
+        where: {
+            status: false,
+        },
+    });
+
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: deletedTodos,
+    });
 };
 
 // UPDATE TODO
-const updateTodo = async (req, res) => {
-  const { id } = req.params;
+const updateTodo = async(req, res) => {
+    const { id } = req.params;
 
-  const todo = await prisma.todos.findFirst({
-    where: {
-      id,
-    },
-  });
-
-  // logic
-  if (!todo) {
-    return res.status(404).json({
-      error: `No such todo with id: ${id}`,
+    const todo = await prisma.todos.findFirst({
+        where: {
+            id,
+        },
     });
-  }
 
-  const updatedTodo = await prisma.todos.update({
-    where: {
-      id,
-    },
-    data: {
-      ...req.body,
-    },
-  });
+    // logic
+    if (!todo) {
+        return res.status(404).json({
+            error: `No such todo with id: ${id}`,
+        });
+    }
 
-  res.status(200).json({
-    message: `endpoint /todos${req.path} successfull`,
-    data: updatedTodo,
-  });
+    const updatedTodo = await prisma.todos.update({
+        where: {
+            id,
+        },
+        data: {
+            ...req.body,
+        },
+    });
+
+    res.status(200).json({
+        message: `endpoint /todos${req.path} successfull`,
+        data: updatedTodo,
+    });
 };
 
 module.exports = {
-  getTodos,
-  getTodosCompleted,
-  getTodosUncomplete,
-  postTodo,
-  getTodo,
-  deleteTodo,
-  updateTodo,
-  deleteCompletedTodos,
+    getTodos,
+    getTodosCompleted,
+    getTodosUncomplete,
+    postTodo,
+    getTodo,
+    deleteTodo,
+    updateTodo,
+    deleteCompletedTodos,
+    deleteUnCompletedTodos,
 };
